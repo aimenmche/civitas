@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/aimenmche/civitas/actions/workflows/ci.yml/badge.svg)](https://github.com/aimenmche/civitas/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version 0.3.0](https://img.shields.io/badge/version-0.3.0-amber.svg)](CHANGELOG.md)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://www.python.org/)
 [![React 19](https://img.shields.io/badge/react-19-61dafb.svg)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/fastapi-0.115-009688.svg)](https://fastapi.tiangolo.com/)
@@ -212,4 +213,4 @@ GitHub Actions runs the same checks on every push and pull request to `main` (`.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). Release notes are in [CHANGELOG.md](CHANGELOG.md).

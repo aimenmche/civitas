@@ -14,6 +14,7 @@ from ..schemas import (
 )
 from ..services.runtime import manager
 from ..services.emergence import detect_emergence
+from ..version import __version__
 
 router = APIRouter(prefix="/api")
 
@@ -51,6 +52,7 @@ def health() -> dict:
     return {
         "status": "ok",
         "app": settings.app_name,
+        "version": __version__,
         "runs": len(manager.runtimes),
         "database": "sqlite" if settings.database_url.startswith("sqlite") else "postgresql",
         "llm": settings.llm_active,

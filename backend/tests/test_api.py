@@ -10,6 +10,7 @@ def test_full_api_flow() -> None:
         health = client.get("/api/health")
         assert health.status_code == 200
         assert health.json()["status"] == "ok"
+        assert health.json()["version"] == "0.3.0"
 
         created = client.post("/api/runs", json={
             "world": {"seed": 4242, "world_name": "PyTest World", "initial_population": 12},

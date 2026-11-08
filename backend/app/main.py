@@ -13,6 +13,7 @@ from .api.routes import router
 from .config import settings
 from .db import init_db
 from .services.runtime import manager
+from .version import __version__
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("civitas")
@@ -31,7 +32,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CIVITAS API",
     description="Autonomous civilization simulator: deterministic simulation, emergent societies.",
-    version="0.1.0",
+    version=__version__,
     lifespan=lifespan,
 )
 
