@@ -1,26 +1,65 @@
 # CIVITAS — Autonomous Civilization Observatory
 
+[![CI](https://github.com/aimenmche/civitas/actions/workflows/ci.yml/badge.svg)](https://github.com/aimenmche/civitas/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://www.python.org/)
+[![React 19](https://img.shields.io/badge/react-19-61dafb.svg)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/fastapi-0.115-009688.svg)](https://fastapi.tiangolo.com/)
+[![SQLite](https://img.shields.io/badge/storage-sqlite-003b57.svg)](https://www.sqlite.org/)
+
 CIVITAS is a full-stack civilization simulator. You create a procedural world, seed it with a small population of autonomous agents, and watch them survive, gather, build, form relationships, found settlements, argue about laws, invent technologies, speak languages, raise families and die. Every event is produced by the simulation; nothing is scripted.
 
 ![CIVITAS overview](docs/overview.png)
 
-## Quick start (Windows)
+## Screenshots
 
-Two terminals are required for development.
+| World map — device-pixel canvas | Emergence detector — findings from the stored log |
+|---|---|
+| ![World map](docs/world-map.png) | ![Emergence](docs/emergence.png) |
+| **Diplomacy — relations matrix and pair dossier** | **Multiverse — worlds, snapshots and branches** |
+| ![Diplomacy](docs/diplomacy.png) | ![Multiverse](docs/multiverse.png) |
+
+## Quick start
+
+Requirements: **Python 3.12+**, **Node.js 20+**, and npm. Two terminals are required for development.
+
+```bash
+git clone https://github.com/aimenmche/civitas.git
+cd civitas
+```
 
 ### 1. Backend
 
+```bash
+cd backend
+python -m venv .venv
+```
+
+Activate the virtual environment, then install and run:
+
 ```powershell
-cd C:\Users\Aimen\civitas\backend
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+```bash
+# macOS / Linux
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
 The API is now at `http://127.0.0.1:8000/api`. Interactive docs: `http://127.0.0.1:8000/docs`.
 
 ### 2. Frontend
 
-```powershell
-cd C:\Users\Aimen\civitas\frontend
+In a second terminal:
+
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
@@ -28,11 +67,11 @@ Open **http://localhost:5173**. Vite proxies `/api` (including WebSockets) to po
 
 ### Production-style single server
 
-```powershell
-cd C:\Users\Aimen\civitas\frontend
+```bash
+cd frontend
 npm run build
-cd ..\backend
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8000
+cd ../backend
+python -m uvicorn app.main:app --port 8000
 ```
 
 Then open `http://127.0.0.1:8000`. The backend serves `frontend/dist` when it exists.
@@ -88,7 +127,7 @@ frontend/
 - **Deterministic.** A custom PRNG seeded from the world seed and the day. The same seed, config and step count produce identical state. This is covered by tests.
 - **Rule-based agents.** Each living agent scores candidate actions from needs, personality, skills, inventory, relationships, settlement stores and long-term goals. The best action executes; the ranked alternatives and a short rationale are stored on the agent.
 - **No LLM dependency.** The simulation runs completely offline. The optional chronicler only turns already-recorded events into prose on explicit request.
-- **Persistence.** SQLite by default (`backend/data/civitas.db`). Runs, events, daily metrics and snapshots are stored in relational tables; full engine snapshots are JSON blobs used for restore and branching. PostgreSQL is supported through `CIVITAS_DATABASE_URL`.
+- **Persistence.** SQLite by default (`backend/data/civitas.db`). Runs, events, daily metrics and snapshots are stored in relational tables; full engine snapshots are JSON blobs used for restore and branching. The ORM also accepts a PostgreSQL URL through `CIVITAS_DATABASE_URL` (not verified end-to-end; see [Honest limitations](#honest-limitations)).
 - **Live server loop.** The FastAPI process owns the simulation clock. Runs tick server-side at their configured speed and broadcast tick payloads over `/api/ws/runs/{run_id}`. Closing the browser does not pause the world.
 
 ## World presets
@@ -103,11 +142,11 @@ frontend/
 
 ## Configuration
 
-Environment variables (prefix `CIVITAS_`, optional `.env` in `backend/`):
+Environment variables (prefix `CIVITAS_`, optional `.env` in `backend/`; see `backend/.env.example`):
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `CIVITAS_DATABASE_URL` | `sqlite:///…/backend/data/civitas.db` | SQLAlchemy URL; PostgreSQL supported |
+| `CIVITAS_DATABASE_URL` | `sqlite:///…/backend/data/civitas.db` | SQLAlchemy URL; PostgreSQL accepted by the ORM |
 | `CIVITAS_CORS_ORIGINS` | localhost:5173 | comma-separated browser origins |
 | `CIVITAS_API_KEY` | unset | if set, WebSocket connections require `?api_key=` |
 | `CIVITAS_SNAPSHOT_INTERVAL_DAYS` | 25 | automatic snapshot cadence (newest 20 kept) |
@@ -146,14 +185,19 @@ The chronicler is the only LLM feature. It is explicitly provider-independent (O
 | POST | `/api/runs/{id}/chronicle` | optional narrative enrichment |
 | WS | `/api/ws/runs/{id}` | live state and tick stream |
 
-## Tests
+## Tests and continuous integration
 
-```powershell
-cd C:\Users\Aimen\civitas\backend
-.\.venv\Scripts\python.exe -m pytest -q
+```bash
+cd backend
+python -m pytest -q
+cd ../frontend
+npm run typecheck
+npm run build
 ```
 
 The suite covers deterministic replay, world generation, long-run survival without exceptions, snapshot restore equivalence, the emergence scanner's calendar and metric-difference rules, and the main REST flow.
+
+GitHub Actions runs the same checks on every push and pull request to `main` (`.github/workflows/ci.yml`): backend tests on Python 3.12 and a frontend typecheck plus production build on Node 20.
 
 ## Honest limitations
 
@@ -165,3 +209,7 @@ The suite covers deterministic replay, world generation, long-run survival witho
 - **LLM use is deliberately manual.** This avoids non-determinism, cost and hidden scripted outcomes. If no provider is configured, the chronicler returns a clear "unavailable" message and everything else works.
 - **Emergence findings are descriptive, not explanatory.** The detector reports first occurrences and outliers read directly from stored event and metric rows. Its measured lines are raw day-to-day differences, and every causal reading is explicitly labelled a hypothesis. It does not establish why a change happened, and it caps output at the earliest 100 findings by day.
 - **Narrative prose is minimal in the simulation itself.** Event descriptions are generated from real state and numbers; they are not literary fiction. The optional chronicler is the only prose layer.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
