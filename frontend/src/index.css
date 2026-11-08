@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #070b12;
+  --color-bg2: #0a101b;
+  --color-panel: #0d1623;
+  --color-panel2: #111d2d;
+  --color-edge: #1d2b3f;
+  --color-edge-soft: #162234;
+  --color-fg: #dce7f5;
+  --color-muted: #7f92a9;
+  --color-dim: #52647a;
+  --color-amber: #f0b35a;
+  --color-teal: #58d6c5;
+  --color-violet: #9d8cf5;
+  --color-danger: #ef6b78;
+  --color-good: #7ed491;
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #24354b transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 700px at 12% -12%, rgba(51, 96, 128, 0.16), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(126, 84, 176, 0.11), transparent 55%),
+    var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #24354b;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-edge bg-panel/85;
+    box-shadow: 0 18px 50px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  }
+
+  .panel-soft {
+    @apply rounded-lg border border-edge-soft bg-panel2/55;
+  }
+
+  .panel-head {
+    @apply flex items-center justify-between gap-3 border-b border-edge-soft px-4 py-3;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[10px] uppercase tracking-[0.22em] text-muted;
+  }
+
+  .num {
+    @apply font-mono tabular-nums;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-edge bg-panel2 px-3 py-2 text-xs font-medium text-fg transition-colors hover:border-dim hover:bg-panel2/80 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-amber/40 bg-amber/15 px-3 py-2 text-xs font-semibold text-amber transition-colors hover:bg-amber/25 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted transition-colors hover:bg-white/5 hover:text-fg;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-edge bg-panel2/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted;
+  }
+
+  .chip-live {
+    @apply border-good/30 bg-good/10 text-good;
+  }
+
+  .nav-item {
+    @apply flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-[13px] text-muted transition-colors hover:bg-white/[0.035] hover:text-fg;
+  }
+
+  .nav-item-active {
+    @apply border-edge bg-white/[0.045] text-fg;
+    box-shadow: inset 2px 0 0 var(--color-amber);
+  }
+
+  .input {
+    @apply w-full rounded-md border border-edge bg-bg2 px-3 py-2 text-sm text-fg outline-none transition-colors placeholder:text-dim focus:border-amber/50;
+  }
+
+  .label {
+    @apply mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-muted;
+  }
+
+  .stat-value {
+    @apply font-mono text-2xl font-semibold tabular-nums tracking-tight text-fg;
+  }
+
+  .stat-label {
+    @apply font-mono text-[10px] uppercase tracking-[0.18em] text-muted;
+  }
+
+  .table-row {
+    @apply border-b border-edge-soft/70 transition-colors hover:bg-white/[0.025];
+  }
+
+  .meter {
+    @apply h-1.5 overflow-hidden rounded-full bg-white/[0.06];
+  }
+
+  .meter-fill {
+    @apply h-full rounded-full transition-[width] duration-500;
+  }
+
+  .scroll-area {
+    @apply overflow-y-auto overscroll-contain;
+  }
+
+  .kbd {
+    @apply rounded border border-edge bg-bg2 px-1.5 py-0.5 font-mono text-[10px] text-muted;
+  }
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-dim);
+}
+
+.recharts-default-tooltip {
+  border-radius: 8px !important;
+}
+
+.fade-in {
+  animation: fade-in 0.35s ease both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+
